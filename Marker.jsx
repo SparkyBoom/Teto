@@ -1,27 +1,44 @@
-import React from 'react';
-import { Marker, Popup } from 'react-leaflet';
-import { defaultIcon, highlightIcon } from './data'; // Import icons from the data file
+import React, { useRef, createRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { markerData, defaultIcon } from './data';
 
-/**
- * Renders a single, interactive marker on the map.
- * Its appearance (default or highlighted) is controlled by the `isHovered` prop.
- * * @param {object} props - The component props.
- * @param {Array<number>} props.coords - The latitude and longitude for the marker.
- * @param {string} props.name - The text for the marker's popup.
- * @param {boolean} props.isHovered - Determines if the marker should be highlighted.
- * @param {React.Ref} props.markerRef - The ref to attach to the Leaflet marker instance for parent access.
- */
-function MarkerComponent({ coords, name, isHovered, markerRef }) {
+function MapComponent({ children }) {
+  const markerRefs = useRef(markerData.map(() => createRef()));
+
+  const handleButtonClick = (index) => {
+    const markerRef = markerRefs.current[index];
+    if (markerRef && markerRef.current) {
+      const marker = markerRef.current;
+      const map = marker._map;
+      if (map) {
+        map.setView(marker.getLatLng(), 15);
+        marker.openPopup();
+      }
+    }
+  };
+
   return (
-    <Marker
-      position={coords}
-      icon={isHovered ? highlightIcon : defaultIcon}
-      ref={markerRef}
-    >
-      <Popup>{name}</Popup>
-    </Marker>
+    <div>
+      {children(handleButtonClick)}
+
+      <MapContainer center={[51.505, -0.09]} zoom={13} className="leaflet-container">
+        <TileLayer
+          attribution='&copy; OpenStreetMap contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {markerData.map((marker, index) => (
+          <Marker
+            key={index}
+            position={marker.coords}
+            icon={defaultIcon}
+            ref={markerRefs.current[index]}
+          >
+            <Popup>{marker.name}</Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+    </div>
   );
 }
 
-export default MarkerComponent;
-
+export default MapComponent;
