@@ -1,8 +1,10 @@
+
 import React from 'react';
 
 /**
  * A reusable button component for the map application.
- * @param {object} props - The component props.
+ * It is a "presentational" component that receives its state and callbacks via props.
+ * * @param {object} props - The component props.
  * @param {string} props.name - The text to display on the button.
  * @param {function} props.onClick - The function to call when the button is clicked.
  * @param {function} props.onMouseEnter - The function for the mouse enter event.
