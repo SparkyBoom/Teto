@@ -4,8 +4,19 @@ const markersFromDB = [
   { id: 3, name: 'Marker Three', coordinates: [51.49, -0.08] }
 ];
 
-markersFromDB.map(marker =>
-  L.marker(marker.coordinates)
+// Create markers and handle button hover styling
+markersFromDB.map(marker => {
+  const leafletMarker = L.marker(marker.coordinates)
     .addTo(map)
-    .bindPopup(`<b>${marker.name}</b><br>ID: ${marker.id}`)
-);
+    .bindPopup(`<b>${marker.name}</b><br>ID: ${marker.id}`);
+
+  leafletMarker.on('mouseover', () => {
+    document.getElementById(`btn-${marker.id}`).classList.add('hovered');
+  });
+
+  leafletMarker.on('mouseout', () => {
+    document.getElementById(`btn-${marker.id}`).classList.remove('hovered');
+  });
+
+  return leafletMarker;
+});
