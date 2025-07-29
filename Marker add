@@ -1,0 +1,14 @@
+window.markerMap = window.markerMap || {};
+
+markersFromDB.map(marker => {
+  const m = L.marker(marker.coordinates).addTo(map).bindPopup(`<b>${marker.name}</b><br>ID: ${marker.id}`);
+  window.markerMap[marker.id] = m;
+
+  m.on('mouseover', () => {
+    document.getElementById(`btn-${marker.id}`)?.classList.add('hovered');
+  });
+
+  m.on('mouseout', () => {
+    document.getElementById(`btn-${marker.id}`)?.classList.remove('hovered');
+  });
+});
